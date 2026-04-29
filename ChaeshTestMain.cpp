@@ -1,3 +1,4 @@
+//202311383 채성현 202312342 김민준 202510946 김두현 202511492 이창민
 #ifdef _DEBUG
 	#ifndef DBG_NEW
 #define DBG_NEW new(_NORMAL_BLOCK,__FILE__,__LINE__)
@@ -84,6 +85,7 @@ int main() {
 	}
 
 	mgr.setGrade("S101", "C002", 3.5);
+	mgr.printStudentRecord("S101");
 
 	if (mgr.cancelEnroll("S101", "C002"))
 	{
@@ -98,6 +100,9 @@ int main() {
 	mgr.enroll(s, mgr.findCourse("C001"));
 	mgr.setGrade("S101", "C001", 4.0);
 	mgr.printStudentRecord("S101");
+
+	mgr.enroll(s2, mgr.findCourse("C001"));
+	mgr.printCommonCourse(*s, *s2);
 
 	return 0;
 }

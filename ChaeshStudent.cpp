@@ -1,10 +1,24 @@
+//202311383 채성현 202312342 김민준 202510946 김두현 202511492 이창민
 #include "ChaeshStudent.h"
 
-ChaeshStudent::ChaeshStudent(string id, string name, double grade)
+ChaeshStudent::ChaeshStudent(string id, string name, int grade)
 	:id(id),name(name),grade(grade),countCourse(0)
 {
 	courseList = make_shared<ChaeshCourse*[]>(100);
 	enrollList = make_shared<ChaeshEnrollment * []>(100);
+}
+
+ChaeshStudent::~ChaeshStudent()
+{
+	
+	for (int i = 0; i < countCourse; i++)
+	{
+		if (enrollList[i] != nullptr)
+		{
+			delete this->enrollList[i];
+			enrollList[i] = nullptr;
+		}
+	}
 }
 
 ChaeshStudent& ChaeshStudent::operator=(ChaeshStudent& student)
@@ -29,12 +43,17 @@ string ChaeshStudent::getName()
 	return this->name;
 }
 
+double ChaeshStudent::getStudentGrade()
+{
+	return this->grade;
+}
+
 int ChaeshStudent::getCountCourse()
 {
 	return this->countCourse;
 }
 
-bool ChaeshStudent::enrollCourse(ChaeshCourse& course)
+bool ChaeshStudent::enrollCourse(ChaeshCourse* course)
 {
 	if (&course == nullptr)
 	{
@@ -42,12 +61,13 @@ bool ChaeshStudent::enrollCourse(ChaeshCourse& course)
 	}
 	for (int i = 0; i < countCourse; i++)
 	{
-		if (this->courseList[i]->getCourseId() == course.getCourseId()) {
+		if (this->courseList[i]->getCourseId() == course->getCourseId()) {
 			return false;
 		}
 	}
-	this->courseList[countCourse] = &course;
-	this->enrollList[countCourse] = new ChaeshEnrollment(this, &course);
+	this->courseList[countCourse] = course;
+	this->enrollList[countCourse] = new ChaeshEnrollment(this, course);
+	countCourse++;
 	return true;
 }
 
@@ -56,15 +76,23 @@ bool ChaeshStudent::cancelCourse(ChaeshCourse& course)
 	for (int i = 0; i < countCourse; i++)
 	{
 		if (this->courseList[i]->getCourseId() == course.getCourseId()) {
-			delete this->courseList[i];
+
 			delete this->enrollList[i];
+			for (int j = i; j < countCourse - 1; j++)
+			{
+				this->courseList[j] = this->courseList[j + 1];
+				this->enrollList[j] = this->enrollList[j + 1];
+			}
+			this->courseList[countCourse - 1] = nullptr;
+			this->enrollList[countCourse - 1] = nullptr;
+			countCourse--;
 			return true;
 		}
 	}
 	return false;
 }
 
-void ChaeshStudent::setGrade(double grade)
+void ChaeshStudent::setGrade(int grade)
 {
 	this->grade = grade;
 }

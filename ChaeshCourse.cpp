@@ -1,4 +1,10 @@
+//202311383 채성현 202312342 김민준 202510946 김두현 202511492 이창민
 #include "ChaeshCourse.h"
+
+ChaeshCourse::~ChaeshCourse()
+{
+	
+}
 
 ChaeshCourse::ChaeshCourse(string id, string name, string prof, int max)
 	:id(id),name(name),prof(prof),max(max)
@@ -46,7 +52,12 @@ bool ChaeshCourse::cancelStudent(ChaeshStudent& student)
 	for (int i = 0; i < count; i++)
 	{
 		if (this->studentList[i]->getId() == student.getId()) {
-			delete this->studentList[i];
+			for (int j = i; j < count - 1; j++)
+			{
+				this->studentList[j] = this->studentList[j + 1];
+			}
+			this->studentList[count - 1] = nullptr;
+			count--;
 			return true;
 		}
 	}
@@ -56,6 +67,16 @@ bool ChaeshCourse::cancelStudent(ChaeshStudent& student)
 string ChaeshCourse::getCourseId()
 {
 	return this->id;
+}
+
+string ChaeshCourse::getCourseName()
+{
+	return this->name;
+}
+
+string ChaeshCourse::getProf()
+{
+	return this->prof;
 }
 
 void ChaeshCourse::changeCapacity(int num)
