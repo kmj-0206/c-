@@ -1,4 +1,4 @@
-//202311383 채성현 202312342 김민준 202510946 김두현 202511492 이창민
+﻿//202311383 채성현 202312342 김민준 202510946 김두현 202511492 이창민
 #ifdef _DEBUG
 	#ifndef DBG_NEW
 #define DBG_NEW new(_NORMAL_BLOCK,__FILE__,__LINE__)
@@ -104,5 +104,9 @@ int main() {
 	mgr.enroll(s2, mgr.findCourse("C001"));
 	mgr.printCommonCourse(*s, *s2);
 
+	ChaeshCourse* target = mgr.findCourse("C002");
+	target->changeCapacity(1);
+	target->changeCapacity(5);
+	cout << *target << endl;
 	return 0;
 }
