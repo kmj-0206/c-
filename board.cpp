@@ -20,26 +20,37 @@ void Board::init()
     }
 }
 
-bool Board::isCollision(const TetrisBlock& block)
+bool Board::isCollision(const BlockState& state,int shape) const
 {
-    int x = block.getX();
-    int y = block.getY();
-    int shape = block.getShape();
-    int angle = block.getAngle();
-
     for (int i = 0; i < 4; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            if (TetrisBlock::getBlockData(shape, angle, i, j) == 0)
-                continue;
-
-            int boardX = x + j;
-            int boardY = y + i;
-
-            if (cells[boardY][boardX] == 1)
+            if (TetrisBlock::getBlockData(shape,state.angle,i,j) == 1)
             {
-                return true;
+                int boardX = state.x + j;
+                int boardY = state.y + i;
+
+                if (boardX < 0 ||
+                    boardX >= this->getBoardWidth())
+                {
+                    return true;
+                }
+
+                if (boardY >= this->getBoardHeight())
+                {
+                    return true;
+                }
+
+                if (boardY >= 0)
+                {
+                    if (this->getBoardValue(
+                        boardY,
+                        boardX) == 1)
+                    {
+                        return true;
+                    }
+                }
             }
         }
     }

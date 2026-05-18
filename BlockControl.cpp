@@ -53,45 +53,9 @@ void BlockControl::dropFull()
     show_block(*curControlBlock);
 }
 
-bool BlockControl::canMoveTo(
-    const BlockState& state) const
+bool BlockControl::canMoveTo(const BlockState& state) const
 {
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            if (curControlBlock->getBlock(
-                curControlBlock->getShape(),
-                state.angle,
-                i,
-                j) == 1)
-            {
-                int boardX = state.x + j;
-                int boardY = state.y + i;
+    return !curBoard->isCollision(state, curControlBlock->getShape());
 
-                if (boardX < 0 ||
-                    boardX >= curBoard->getBoardWidth())
-                {
-                    return false;
-                }
-
-                if (boardY >= curBoard->getBoardHeight())
-                {
-                    return false;
-                }
-
-                if (boardY >= 0)
-                {
-                    if (curBoard->getBoardValue(
-                        boardY,
-                        boardX) == 1)
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-
-    return true;
+    
 }

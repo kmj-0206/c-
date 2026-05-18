@@ -194,7 +194,7 @@ const char TetrisBlock::block[7][4][4][4] =
 };
 
 TetrisBlock::TetrisBlock(int stick_rate)
-    : x(5), y(0), angle(0), stick_rate(stick_rate)
+    : x(5), y(-4), angle(0), stick_rate(stick_rate)
 {
     int i = rand() % 100;
 

@@ -9,7 +9,7 @@ private:
 public:
     void init();
 
-    bool isCollision(const TetrisBlock& block);
+    bool isCollision(const BlockState& state,int shape) const;
     void merge(const TetrisBlock& block);
 
     int clearFullLines(int& score, int& lines, int level);

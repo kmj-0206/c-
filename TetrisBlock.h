@@ -47,8 +47,4 @@ public:
     int getAngle() const { return angle; }
     int getShape() const { return shape; }
     int getColor() const { return color; }
-
-    char getBlock(int s, int a, int y, int x) const {
-        return block[s][a][y][x];
-    }
 };

@@ -46,12 +46,15 @@ void Console::show_block(const TetrisBlock& block)
     {
         for (int j = 0; j < 4; j++)
         {
-            if (block.getBlock(
+            if (TetrisBlock::getBlockData(
                 block.getShape(),
                 block.getAngle(),
                 i,
                 j) == 1)
             {
+                if (block.getY() < -1) {
+                    continue;
+                }
                 int drawX =
                     (block.getX() + j) * 2 + ab_x;
 
@@ -74,12 +77,15 @@ void Console::erase_block(const TetrisBlock& block)
     {
         for (int j = 0; j < 4; j++)
         {
-            if (block.getBlock(
+            if (TetrisBlock::getBlockData(
                 block.getShape(),
                 block.getAngle(),
                 i,
                 j) == 1)
             {
+                if (block.getY() < -1) {
+                    continue;
+                }
                 int drawX =
                     (block.getX() + j) * 2 + ab_x;
 
