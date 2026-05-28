@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #pragma once
+=======
+﻿#pragma once
+>>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
 #include "Console.h"
 
 struct BlockState {
@@ -14,6 +18,7 @@ enum class MoveCommand {
     ROTATE
 };
 
+<<<<<<< HEAD
 enum class ItemType {
     NONE = 0,
     A = 2,   // cleared line also removes one line above and below
@@ -21,6 +26,8 @@ enum class ItemType {
     C = 4    // next 5 blocks become stick blocks
 };
 
+=======
+>>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
 class TetrisBlock
 {
 private:
@@ -32,7 +39,10 @@ private:
     int y;
     int stick_rate;
     int color;
+<<<<<<< HEAD
     ItemType itemType;
+=======
+>>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
 
     void move_left(BlockState& state) const;
     void move_right(BlockState& state) const;
@@ -40,7 +50,11 @@ private:
     void move_rotate(BlockState& state) const;
 
 public:
+<<<<<<< HEAD
     TetrisBlock(int stick_rate = 20, int forceShape = -1, ItemType forceItem = ItemType::NONE);
+=======
+    TetrisBlock(int stick_rate = 20);
+>>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
 
     BlockState propose(MoveCommand cmd) const;
 
@@ -55,5 +69,9 @@ public:
     int getAngle() const { return angle; }
     int getShape() const { return shape; }
     int getColor() const { return color; }
+<<<<<<< HEAD
     ItemType getItemType() const { return itemType; }
 };
+=======
+};
+>>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
