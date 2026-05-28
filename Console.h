@@ -1,15 +1,8 @@
-<<<<<<< HEAD
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
 #include <Windows.h>
 #include <vector>
-=======
-﻿#ifndef CONSOLE_H
-#define CONSOLE_H
-
-#include <Windows.h>
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
 
 class TetrisBlock;
 class Board;
@@ -20,7 +13,6 @@ namespace Console {
     constexpr int ab_y = 1;
 
     void gotoxy(int x, int y);
-<<<<<<< HEAD
     void SetColor(int color);
     void clear();
     void hideCursor();
@@ -33,23 +25,6 @@ namespace Console {
     void drawInfo(int score, int lines, int level, int comboMultiplier, int difficulty);
     void drawNextBlocks(const std::vector<TetrisBlock>& nextBlocks);
     void drawRankings(const std::vector<int>& ranks);
-=======
-
-    void SetColor(int color);
-
-    void clear();
-
-    void hideCursor();
-
-    void show_block(const TetrisBlock& block);
-
-    void erase_block(const TetrisBlock& block);
-
-    void drawBoard(const Board& board);
-
-    void drawInfo(int score, int lines, int level);
-
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
     void drawGameOver();
 
     enum Color {
@@ -72,8 +47,4 @@ namespace Console {
     };
 }
 
-<<<<<<< HEAD
 #endif
-=======
-#endif
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f

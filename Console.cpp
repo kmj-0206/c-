@@ -2,37 +2,20 @@
 #include "TetrisBlock.h"
 #include "board.h"
 #include <iostream>
-<<<<<<< HEAD
 #include <string>
-=======
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
 
 void Console::gotoxy(int x, int y)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-<<<<<<< HEAD
     COORD pos;
     pos.X = x;
     pos.Y = y;
-=======
-
-    COORD pos;
-    pos.X = x;
-    pos.Y = y;
-
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
     SetConsoleCursorPosition(hConsole, pos);
 }
 
 void Console::SetColor(int color)
 {
-<<<<<<< HEAD
     static HANDLE std_output_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-=======
-    static HANDLE std_output_handle =
-        GetStdHandle(STD_OUTPUT_HANDLE);
-
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
     SetConsoleTextAttribute(std_output_handle, color);
 }
 
@@ -44,17 +27,9 @@ void Console::clear()
 void Console::hideCursor()
 {
     HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-<<<<<<< HEAD
     CONSOLE_CURSOR_INFO info;
     info.dwSize = 1;
     info.bVisible = FALSE;
-=======
-
-    CONSOLE_CURSOR_INFO info;
-    info.dwSize = 1;
-    info.bVisible = FALSE;
-
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
     SetConsoleCursorInfo(handle, &info);
 }
 
@@ -66,32 +41,12 @@ void Console::show_block(const TetrisBlock& block)
     {
         for (int j = 0; j < 4; j++)
         {
-<<<<<<< HEAD
             if (TetrisBlock::getBlockData(block.getShape(), block.getAngle(), i, j) == 1)
             {
                 if (block.getY() + i < 0) continue;
                 int drawX = (block.getX() + j) * 2 + ab_x;
                 int drawY = block.getY() + i + ab_y;
                 gotoxy(drawX, drawY);
-=======
-            if (TetrisBlock::getBlockData(
-                block.getShape(),
-                block.getAngle(),
-                i,
-                j) == 1)
-            {
-                if (block.getY() < -1) {
-                    continue;
-                }
-                int drawX =
-                    (block.getX() + j) * 2 + ab_x;
-
-                int drawY =
-                    block.getY() + i + ab_y;
-
-                gotoxy(drawX, drawY);
-
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
                 std::cout << "■";
             }
         }
@@ -106,39 +61,18 @@ void Console::erase_block(const TetrisBlock& block)
     {
         for (int j = 0; j < 4; j++)
         {
-<<<<<<< HEAD
             if (TetrisBlock::getBlockData(block.getShape(), block.getAngle(), i, j) == 1)
             {
                 if (block.getY() + i < 0) continue;
                 int drawX = (block.getX() + j) * 2 + ab_x;
                 int drawY = block.getY() + i + ab_y;
                 gotoxy(drawX, drawY);
-=======
-            if (TetrisBlock::getBlockData(
-                block.getShape(),
-                block.getAngle(),
-                i,
-                j) == 1)
-            {
-                if (block.getY() < -1) {
-                    continue;
-                }
-                int drawX =
-                    (block.getX() + j) * 2 + ab_x;
-
-                int drawY =
-                    block.getY() + i + ab_y;
-
-                gotoxy(drawX, drawY);
-
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
                 std::cout << "  ";
             }
         }
     }
 }
 
-<<<<<<< HEAD
 void Console::drawGhostBlock(const TetrisBlock& block, const Board& board)
 {
     TetrisBlock ghost = block;
@@ -165,8 +99,6 @@ void Console::drawGhostBlock(const TetrisBlock& block, const Board& board)
     SetColor(WHITE);
 }
 
-=======
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
 void Console::drawBoard(const Board& board)
 {
     for (int y = 0; y < board.getBoardHeight(); y++)
@@ -174,7 +106,6 @@ void Console::drawBoard(const Board& board)
         for (int x = 0; x < board.getBoardWidth(); x++)
         {
             gotoxy(x * 2 + ab_x, y + ab_y);
-<<<<<<< HEAD
             if (board.getBoardValue(y, x))
                 std::cout << "■";
             else
@@ -240,43 +171,12 @@ void Console::drawRankings(const std::vector<int>& ranks)
         else
             std::cout << i + 1 << ". -        ";
     }
-=======
-
-            if (board.getBoardValue(y, x))
-            {
-                std::cout << "■";
-            }
-            else
-            {
-                std::cout << "  ";
-            }
-        }
-    }
-}
-
-void Console::drawInfo(int score, int lines, int level)
-{
-    gotoxy(40, 3);
-    std::cout << "Score : " << score << "   ";
-
-    gotoxy(40, 5);
-    std::cout << "Lines : " << lines << "   ";
-
-    gotoxy(40, 7);
-    std::cout << "Level : " << level + 1 << "   ";
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
 }
 
 void Console::drawGameOver()
 {
-<<<<<<< HEAD
     gotoxy(40, 20);
     SetColor(RED);
     std::cout << "GAME OVER";
     SetColor(WHITE);
 }
-=======
-    gotoxy(40, 12);
-    std::cout << "GAME OVER";
-}
->>>>>>> 2b24056ba33a1c51895681e13804e40bc827352f
