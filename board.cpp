@@ -52,11 +52,12 @@ bool Board::isCollision(const BlockState& state, int shape) const
 }
 void Board::merge(const TetrisBlock& block)
 {
+    //굳을 블록의 데이터
     int x = block.getX();
     int y = block.getY();
     int shape = block.getShape();
     int angle = block.getAngle();
-    char value = 1;
+    char value = 7; 
 
     if (block.getItemType() == ItemType::A) value = 2;
     else if (block.getItemType() == ItemType::B) value = 3;
@@ -76,11 +77,10 @@ void Board::merge(const TetrisBlock& block)
         }
     }
 }
-
-ClearResult Board::clearFullLines()
+//다 찾는지 확인만 하는 용도. //애니메이션과 로직을 분리하기 위해서.
+ClearResult Board::checkClearLines()
 {
-    ClearResult result = { 0, 0, false, false, false };
-    std::set<int> rowsToRemove;
+    ClearResult result = { 0, {}, false, false, false };
 
     for (int i = 0; i < 20; i++)
     {
@@ -98,7 +98,7 @@ ClearResult Board::clearFullLines()
         if (full)
         {
             result.fullLines++;
-            rowsToRemove.insert(i);
+            result.removedRows.insert(i);
 
             bool rowHasItemA = false;
             for (int j = 1; j < 13; j++)
@@ -110,16 +110,18 @@ ClearResult Board::clearFullLines()
 
             if (rowHasItemA)
             {
-                if (i - 1 >= 0) rowsToRemove.insert(i - 1);
-                if (i + 1 < 20) rowsToRemove.insert(i + 1);
+                if (i - 1 >= 0) result.removedRows.insert(i - 1);
+                if (i + 1 < 20) result.removedRows.insert(i + 1);
             }
         }
     }
 
+    return result;
+}
+void Board::removeLines(const std::set<int>& rowsToRemove)
+{
     if (rowsToRemove.empty())
-        return result;
-
-    result.removedRows = static_cast<int>(rowsToRemove.size());
+        return;
 
     char newCells[21][14] = {};
     for (int y = 0; y < 20; y++)
@@ -146,10 +148,7 @@ ClearResult Board::clearFullLines()
     for (int y = 0; y < 21; y++)
         for (int x = 0; x < 14; x++)
             cells[y][x] = newCells[y][x];
-
-    return result;
 }
-
 char Board::getCell(int y, int x) const
 {
     return cells[y][x];

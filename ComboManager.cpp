@@ -1,25 +1,29 @@
 #include "ComboManager.h"
 
 ComboManager::ComboManager()
-    : lastClearTime(0), multiplier(1)
+    : dropsWithoutClear(0), multiplier(1)
 {
 }
 
-int ComboManager::updateByClear(int clearedLines, ULONGLONG now)
+int ComboManager::updateByClear(int clearedLines)
 {
-    if (clearedLines <= 0)
+    if (clearedLines > 0)
     {
-        multiplier = 1;
+        dropsWithoutClear = 0;
+        multiplier++; // 클리어 시 콤보 배수 증가
+        if (multiplier < 2) multiplier = 2; // 최소 2배부터 시작
         return multiplier;
     }
-
-    if (lastClearTime != 0 && now - lastClearTime <= 10000)
-        multiplier = 2;
     else
-        multiplier = 1;
-
-    lastClearTime = now;
-    return multiplier;
+    {
+        dropsWithoutClear++;
+        if (dropsWithoutClear >= 3)
+        {
+            multiplier = 1; // 3번 연속 클리어 실패 시 콤보 초기화
+            dropsWithoutClear = 0;
+        }
+        return multiplier;
+    }
 }
 
 int ComboManager::getMultiplier() const

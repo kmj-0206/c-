@@ -20,8 +20,8 @@ void RankingManager::load()
     }
 
     std::sort(rankings.begin(), rankings.end(), std::greater<int>());
-    if (rankings.size() > 3)
-        rankings.resize(3);
+    if (rankings.size() > RANK_SIZE) // 10위까지 기억하도록 변경
+        rankings.resize(RANK_SIZE);
 }
 
 void RankingManager::saveScore(int score)
@@ -48,7 +48,7 @@ void RankingManager::saveScore(int score)
     load();
 }
 
-const std::vector<int>& RankingManager::getTop3() const
+const std::vector<int>& RankingManager::getRank() const // 이름 변경
 {
     return rankings;
 }

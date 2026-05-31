@@ -10,7 +10,7 @@ private:
 public:
     DifficultyManager();
 
-    void select();
+    int select(); //랭킹창 보러 들어가는거면 전용 값 반환 필요
     int getDifficulty() const;
     int getLevel() const;
 

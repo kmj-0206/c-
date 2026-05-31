@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "BlockControl.h"
 #include "TetrisBlock.h"
 class GameRule

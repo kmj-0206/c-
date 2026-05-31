@@ -35,14 +35,22 @@ void GameManager::run() {
     while (isRunning) {
         switch (currentState) {
         case GameState::TITLE:
-            Console::drawTitle(); // title 그림. 아무 키나 누르면 대기 종료
-            currentState = GameState::DIFFICULTY_SELECT; // 난이도 선택으로
+            Console::drawTitle();
+            currentState = GameState::DIFFICULTY_SELECT;
             break;
 
         case GameState::DIFFICULTY_SELECT:
-            difficultyManager.select();
-            currentState = GameState::IN_GAME; // 난이도 선택 완료 후 인게임으로
+            // int 반환값을 받아 랭킹으로 갈지, 인게임으로 갈지 결정
+        {
+            int selection = difficultyManager.select(); //case문 안에 있는 지역변수는 scope 확실히 안 해주면 에러남
+            if (selection == 4) {
+                currentState = GameState::RANKING;
+            }
+            else {
+                currentState = GameState::IN_GAME;
+            }
             break;
+        }
 
         case GameState::IN_GAME:
             // 인게임 진입 시 보드 및 큐 초기화
@@ -89,19 +97,20 @@ void GameManager::run() {
 
         case GameState::RANKING:
             Console::clear();
-            Console::drawRankings(rankingManager.getTop3());
+            Console::drawFullRankings(rankingManager.getRank()); // 풀 랭킹창 호출로 변경
 
-            // 깨짐 방지 및 깔끔한 출력 구조로 갱신
-            Console::gotoxy(40, 20);
+            // 8위 점수와 겹치지 않도록 Y좌표를 20에서 27로  내림
+            Console::gotoxy(30, 27);
             std::cout << "[1] Main Menu     [ESC] Exit Game";
 
+            while (_kbhit()) _getch();
             while (true) {
                 int key = _getch();
                 if (key == '1') {
                     currentState = GameState::TITLE;
                     break;
                 }
-                if (key == 27) { // ESC
+                if (key == 27) {
                     currentState = GameState::EXIT;
                     break;
                 }
@@ -169,8 +178,18 @@ void GameManager::fixCurrentBlock(ULONGLONG now)
     }
     board.merge(current);
 
-    ClearResult clearResult = board.clearFullLines();
-    int combo = comboManager.updateByClear(clearResult.fullLines, now);
+    ClearResult clearResult = board.checkClearLines();
+
+    // 2. 라인 클리어 애니메이션 처리
+    if (!clearResult.removedRows.empty()) {
+        for (int i = 0; i < 4; i++) {
+            Console::drawGameField(board, current, difficultyManager.getLevel(), clearResult.removedRows, i % 2 == 0);
+            Sleep(80);
+        }
+        board.removeLines(clearResult.removedRows);
+    }
+
+    int combo = comboManager.updateByClear(clearResult.fullLines);
 
     if (clearResult.fullLines > 0) {
         int gained = clearResult.fullLines * (100 + difficultyManager.getLevel() * 10);
@@ -182,10 +201,9 @@ void GameManager::fixCurrentBlock(ULONGLONG now)
 
         itemEffectManager.applyBlockEffect(clearResult, blockQueue);
 
-        // updateLevel이 true를 반환하면 최종 스테이지까지 목표 라인을 모두 파괴한 것
         if (difficultyManager.updateLevel(score, lines, stages)) {
-            gameOver = true;      // 루프 탈출
-            isGameClear = true;   // 축하 메세지 띄우기
+            gameOver = true;
+            isGameClear = true;
         }
     }
 }
@@ -206,13 +224,12 @@ void GameManager::redrawScreen()
     using namespace Console;
     
     
-    drawGameField(board, current);
+    drawGameField(board, current, difficultyManager.getLevel());
 }
 
 void GameManager::drawUI()
 {
     using namespace Console;
-   
     drawInfo(
         score,
         difficultyManager.getRemainingLines(lines, stages),
@@ -221,5 +238,5 @@ void GameManager::drawUI()
         difficultyManager.getDifficulty()
     );
     drawNextBlocks(blockQueue.preview());
-    drawRankings(rankingManager.getTop3());
+    drawSideRankings(rankingManager.getRank()); // 사이드 랭킹으로 이름 변경
 }

@@ -3,7 +3,7 @@
 
 #include <Windows.h>
 #include <vector>
-
+#include <set>
 class TetrisBlock;
 class Board;
 
@@ -27,11 +27,16 @@ namespace Console {
     void drawBoard(const Board& board);
     void drawInfo(int score, int lines, int level, int comboMultiplier, int difficulty);
     void drawNextBlocks(const std::vector<TetrisBlock>& nextBlocks);
-    void drawRankings(const std::vector<int>& ranks);
+    
+
+    void drawSideRankings(const std::vector<int>& ranks);
+    void drawFullRankings(const std::vector<int>& ranks);
+
+
     void drawGameOver(); //게임오버 UI
     void drawGameClear(); // 게임 클리어 UI
-
-    void drawGameField(const Board& board, const TetrisBlock& current);
+    //isFlash: 애니메이션 파라미터
+    void drawGameField(const Board& board, const TetrisBlock& current,int level, const std::set<int>& flashRows = {}, bool isFlash = false);
 
     void initRenderBuffer(char buffer[21][14], const Board& board);
     void applyBlocksToBuffer(char buffer[21][14], const Board& board, const TetrisBlock& current);

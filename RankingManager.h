@@ -6,11 +6,11 @@ class RankingManager
 private:
     std::vector<int> rankings;
     const char* fileName;
-
+    const int RANK_SIZE = 10;//랭킹 몇 위까지 보이게 할 것인지 표시하는 상수
 public:
     RankingManager(const char* fileName = "rank.txt");
 
     void load();
     void saveScore(int score);
-    const std::vector<int>& getTop3() const;
+    const std::vector<int>& getRank() const; // getTop3 -> getRank로 변경
 };

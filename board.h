@@ -1,9 +1,10 @@
 #pragma once
 #include "TetrisBlock.h"
+#include <set> 
 
 struct ClearResult {
     int fullLines;
-    int removedRows;
+    std::set<int> removedRows; // int에서 set으로 변경 (애니메이션 처리를 위함)
     bool itemA;
     bool itemB;
     bool itemC;
@@ -20,7 +21,9 @@ public:
     bool isCollision(const BlockState& state, int shape) const;
     void merge(const TetrisBlock& block);
 
-    ClearResult clearFullLines();
+    // 기존 clearFullLines() 대신 로직을 분리
+    ClearResult checkClearLines();
+    void removeLines(const std::set<int>& rowsToRemove);
 
     char getCell(int y, int x) const;
 
