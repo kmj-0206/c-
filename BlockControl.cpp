@@ -19,9 +19,9 @@ bool BlockControl::move(MoveCommand cmd)
 
     if (canMoveTo(proposed))
     {
-        erase_block(*curControlBlock);
+        //erase_block(*curControlBlock);
         curControlBlock->commit(proposed);
-        show_block(*curControlBlock);
+        //show_block(*curControlBlock);
         return true;
     }
 
@@ -30,7 +30,7 @@ bool BlockControl::move(MoveCommand cmd)
 
 void BlockControl::dropFull()
 {
-    erase_block(*curControlBlock);
+    //erase_block(*curControlBlock);
 
     BlockState proposed = curControlBlock->propose(MoveCommand::DOWN);
     while (canMoveTo(proposed))
@@ -39,7 +39,7 @@ void BlockControl::dropFull()
         proposed = curControlBlock->propose(MoveCommand::DOWN);
     }
 
-    show_block(*curControlBlock);
+    //show_block(*curControlBlock);
 }
 
 bool BlockControl::canMoveTo(const BlockState& state) const

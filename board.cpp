@@ -32,12 +32,16 @@ bool Board::isCollision(const BlockState& state, int shape) const
                 int boardX = state.x + j;
                 int boardY = state.y + i;
 
-                if (boardX < 0 || boardX >= this->getBoardWidth())
+                // y좌표(화면 위/아래)와 상관없이, 
+                // 왼쪽 벽(x=0) 이하이거나 오른쪽 벽(x=13) 이상으로 나가려 하면 충돌
+                if (boardX <= 0 || boardX >= this->getBoardWidth() - 1)
                     return true;
 
+                // 화면 바닥을 완전히 뚫고 내려가는 것 방지
                 if (boardY >= this->getBoardHeight())
                     return true;
 
+                // 2. 화면 내부(y >= 0)에 진입했을 때만 보드판 데이터(바닥 및 고정 블록) 검사
                 if (boardY >= 0 && this->getBoardValue(boardY, boardX) != 0)
                     return true;
             }
@@ -46,7 +50,6 @@ bool Board::isCollision(const BlockState& state, int shape) const
 
     return false;
 }
-
 void Board::merge(const TetrisBlock& block)
 {
     int x = block.getX();

@@ -5,7 +5,7 @@ ComboManager::ComboManager()
 {
 }
 
-int ComboManager::updateByClear(int clearedLines, DWORD now)
+int ComboManager::updateByClear(int clearedLines, ULONGLONG now)
 {
     if (clearedLines <= 0)
     {

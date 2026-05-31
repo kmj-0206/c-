@@ -9,7 +9,14 @@
 #include "BlockQueue.h"
 #include "ItemEffectManager.h"
 #include <Windows.h>
-
+#include "GameRule.h"
+enum class GameState {
+    TITLE = 1,
+    DIFFICULTY_SELECT =2,
+    IN_GAME = 3,
+    RANKING = 4,
+    EXIT
+};
 class GameManager {
 private:
     GameManager();
@@ -24,20 +31,22 @@ private:
     DifficultyManager difficultyManager;
     BlockQueue blockQueue;
     ItemEffectManager itemEffectManager;
+    GameRule gameRule;
 
     int score;
     int lines;
     bool gameOver;
+    bool isGameClear; // 게임 클리어 상태 변수 추가
     TetrisBlock current;
     BlockControl controller;
-    DWORD lastDrop;
+    ULONGLONG lastDrop;
 
     void handleInput();
     void updateGame();
-    void fixCurrentBlock(DWORD now);
+    void fixCurrentBlock(ULONGLONG now);
     void spawnNextBlock();
     void redrawScreen();
-
+    void drawUI();
 public:
     static GameManager& getInstance();
     void run();

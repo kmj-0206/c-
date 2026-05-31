@@ -8,18 +8,8 @@ StageManager::StageManager()
 StageManager::StageManager(int count)
     : count(count)
 {
-    StageList = new Stage[count];
-
+    StageList.resize(count);
     init_Stage();
-}
-
-StageManager::~StageManager()
-{
-    if (StageList != nullptr)
-    {
-        delete[] StageList;
-        StageList = nullptr;
-    }
 }
 
 void StageManager::init_Stage()

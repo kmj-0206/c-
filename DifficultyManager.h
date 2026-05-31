@@ -14,6 +14,7 @@ public:
     int getDifficulty() const;
     int getLevel() const;
 
-    void updateLevel(int score, int lines, StageManager& stages);
+    bool updateLevel(int score, int& lines, StageManager& stages);
+    int getRemainingLines(int lines, StageManager& stages) const; // 남은 라인 계산용
     int getCurrentSpeed(int score, StageManager& stages) const;
 };

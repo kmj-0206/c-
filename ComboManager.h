@@ -4,12 +4,12 @@
 class ComboManager
 {
 private:
-    DWORD lastClearTime;
+    ULONGLONG lastClearTime;
     int multiplier;
 
 public:
     ComboManager();
 
-    int updateByClear(int clearedLines, DWORD now);
+    int updateByClear(int clearedLines, ULONGLONG now);
     int getMultiplier() const;
 };
