@@ -29,7 +29,7 @@ enum class ItemType {
 class TetrisBlock
 {
 private:
-    static const char block[7][4][4][4];
+    static const unsigned short block[7][4];
 
     int shape;      // 0~6: 테트리스 기본 7개 블록 모양
     int angle;      // 0~3: 회전 상태
@@ -59,8 +59,10 @@ public:
 
     bool isItemBlock() const { return itemType != ItemType::NONE; }
 
-    static char getBlockData(int s, int a, int y, int x) {
-        return block[s][a][y][x];
+    static bool getBlockData(int shape, int angle, int i, int j) {
+        unsigned short currentBlock = block[shape][angle];
+        int bitIndex = 15 - (i * 4 + j);
+        return (currentBlock >> bitIndex) & 1;
     }
 
     int getX() const { return x; }
