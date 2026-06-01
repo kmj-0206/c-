@@ -194,12 +194,12 @@ void GameManager::fixCurrentBlock(ULONGLONG now)
     if (clearResult.fullLines > 0) {
         int gained = clearResult.fullLines * (100 + difficultyManager.getLevel() * 10);
         gained *= combo;
-        gained = itemEffectManager.applyScoreEffect(gained, clearResult);
+        gained = itemEffectManager.applyAfterCalculateScore(gained, clearResult);
 
         score += gained;
         lines += clearResult.fullLines;
 
-        itemEffectManager.applyBlockEffect(clearResult, blockQueue);
+        itemEffectManager.applyBeforeRemoveLines(clearResult, blockQueue);
 
         if (difficultyManager.updateLevel(score, lines, stages)) {
             gameOver = true;
