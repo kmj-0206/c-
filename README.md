@@ -1,3 +1,4 @@
-- 추가 or 수정할만한 요소: ItemBlock들을 상속 관계로 바꾸기.(EffectManager이 아니라)
+- 추가 or 수정할만한 요소
+- ItemBlock들을 상속 관계로 바꾸기.(EffectManager이 아니라, 각 객체에 이벤트들을 정의,오버로딩 방식 추가 or 수정할만한 요소: ItemBlock들을 상속 관계로 바꾸기.(EffectManager이 아니라, 각 객체에 이벤트들을 정의,오버라이딩 방식)
 - 사운드 추가
 - 자잘한 버그 체크
