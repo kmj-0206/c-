@@ -1,0 +1,48 @@
+Tetris refactor notes
+====================
+
+목표
+----
+- 기존 테트리스 기능은 유지한다.
+- 클래스 역할을 더 명확하게 나눈다.
+- 상속, 가상함수, 다형성을 실제 코드에 적용한다.
+- 주석을 추가해 발표/보고서에서 설명하기 쉽게 만든다.
+
+핵심 변경
+---------
+1. BlockFactory 추가
+   - 기존 BlockQueue가 블록 생성과 큐 관리를 동시에 처리하던 구조를 분리했다.
+   - BlockFactory: 블록 생성 전담
+   - BlockQueue: NEXT 5 큐 관리 전담
+
+2. ItemEffect 계층 추가
+   - ItemEffect: 모든 아이템 효과의 부모 클래스
+   - BombLineEffect: 아이템 A 효과
+   - DoubleScoreEffect: 아이템 B 효과
+   - StickBlockSupplyEffect: 아이템 C 효과
+   - ItemEffectManager는 ItemEffect 포인터 목록을 돌면서 가상함수를 호출한다.
+   - 이 부분에서 상속/가상함수/다형성이 적용된다.
+
+3. Board 역할 정리
+   - Board는 보드 상태 관리, 충돌 검사, 블록 병합, 라인 탐지만 담당한다.
+   - 아이템 효과 실행은 Board에서 제거하고 ItemEffectManager로 이동했다.
+
+4. GameManager 역할 정리
+   - resetGame(), processLineClear() 함수를 추가해 게임 초기화와 라인 클리어 처리를 분리했다.
+   - fixCurrentBlock() 안에 있던 복잡한 처리 흐름을 나누었다.
+
+5. TetrisBlock 정리
+   - 랜덤 모양 선택, 랜덤 아이템 선택, 색상 선택을 별도 함수로 분리했다.
+   - isItemBlock()을 추가해 아이템 블록 판단을 더 명확하게 만들었다.
+
+추가된 파일
+----------
+- BlockFactory.h
+- BlockFactory.cpp
+- ItemEffect.h
+- ItemEffect.cpp
+
+Visual Studio 사용 시 주의
+-------------------------
+새로 추가된 .h/.cpp 파일을 프로젝트에 추가해야 한다.
+특히 ItemEffect.cpp, BlockFactory.cpp가 프로젝트에 포함되지 않으면 링크 에러가 날 수 있다.
