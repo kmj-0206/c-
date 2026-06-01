@@ -298,7 +298,7 @@ void Console::drawFullRankings(const std::vector<int>& ranks)
 }
 void Console::drawGameOver()
 {
-    gotoxy(40, 20);
+    gotoxy(20, 10);
     SetColor(RED);
     std::cout << "GAME OVER";
     SetColor(WHITE);
