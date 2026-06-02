@@ -13,5 +13,5 @@ public:
 
     void load();
     void saveScore(int score);
-    const std::vector<int>& getRank() const; // getTop3 -> getRank로 변경
+    const vector<int>& getRank() const; // getTop3 -> getRank로 변경
 };

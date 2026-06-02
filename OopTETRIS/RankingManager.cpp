@@ -2,7 +2,7 @@
 #include <fstream>
 #include <algorithm>
 #include <functional>
-
+using namespace std;
 RankingManager::RankingManager(const char* fileName)
     : fileName(fileName)
 {
@@ -12,23 +12,23 @@ void RankingManager::load()
 {
     rankings.clear();
 
-    std::ifstream fin(fileName);
+    ifstream fin(fileName);
     int score;
     while (fin >> score)
     {
         rankings.push_back(score);
     }
 
-    std::sort(rankings.begin(), rankings.end(), std::greater<int>());
+    sort(rankings.begin(), rankings.end(), greater<int>());
     if (rankings.size() > RANK_SIZE) // 10위까지 기억하도록 변경
         rankings.resize(RANK_SIZE);
 }
 
 void RankingManager::saveScore(int score)
 {
-    std::vector<int> allScores;
+    vector<int> allScores;
 
-    std::ifstream fin(fileName);
+    ifstream fin(fileName);
     int value;
     while (fin >> value)
     {
@@ -38,7 +38,7 @@ void RankingManager::saveScore(int score)
 
     allScores.push_back(score);
 
-    std::ofstream fout(fileName, std::ios::trunc);
+    ofstream fout(fileName, ios::trunc);
     for (int s : allScores)
     {
         fout << s << '\n';
@@ -48,7 +48,7 @@ void RankingManager::saveScore(int score)
     load();
 }
 
-const std::vector<int>& RankingManager::getRank() const // 이름 변경
+const vector<int>& RankingManager::getRank() const // 이름 변경
 {
     return rankings;
 }

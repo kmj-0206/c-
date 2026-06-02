@@ -12,7 +12,7 @@ constexpr int BOARD_RIGHT_WALL = 13;
 
 struct ClearResult {
     int fullLines = 0;                 // 실제로 꽉 찬 줄 수. 점수 계산은 이 값으로 한다.
-    std::set<int> removedRows;         // 애니메이션/삭제 대상 줄. 아이템 A로 확장될 수 있다.
+    std::set<int> removedRows;         // 애니메이션/삭제 대상 줄. 아이템 A로 확장될 수 있다. std 혼자 사용 
     bool itemA = false;
     bool itemB = false;
     bool itemC = false;

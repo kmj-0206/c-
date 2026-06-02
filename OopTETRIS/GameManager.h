@@ -41,11 +41,11 @@ private:
     BlockControl controller;
     ULONGLONG lastDrop;
 
-    void resetGame();
+    void resetGame(); //미사용 함수
     void handleInput();
     void updateGame();
     void fixCurrentBlock(ULONGLONG now);
-    void processLineClear(ClearResult& clearResult);
+    void processLineClear(ClearResult& clearResult); // 미사용 함수
     void spawnNextBlock();
     void redrawScreen();
     void drawUI();

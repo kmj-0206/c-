@@ -3,13 +3,13 @@
 #include "StageManager.h"
 #include "BlockFactory.h"
 #include <vector>
-
+using namespace std;
 class BlockQueue
 {
 private:
     static const int PREVIEW_COUNT = 5;
 
-    std::vector<TetrisBlock> nextBlocks;
+    vector<TetrisBlock> nextBlocks;
     int forceStickCount;
     BlockFactory factory;
 
@@ -25,5 +25,5 @@ public:
     // 아이템 C 효과: 다음 count개의 블록을 I 블록으로 만든다.
     void forceNextStickBlocks(int count);
 
-    const std::vector<TetrisBlock>& preview() const;
+    const vector<TetrisBlock>& preview() const;
 };

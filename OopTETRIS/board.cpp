@@ -128,7 +128,7 @@ ClearResult Board::checkClearLines() const
     return result;
 }
 
-void Board::removeLines(const std::set<int>& rowsToRemove)
+void Board::removeLines(const std::set<int>& rowsToRemove) // namespace 혼용 방지를 위해 std 냅두기
 {
     if (rowsToRemove.empty())
         return;

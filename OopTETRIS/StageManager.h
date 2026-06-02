@@ -5,7 +5,7 @@
 class StageManager
 {
 private:
-    std::vector<Stage> StageList; // 포인터 배열 대신 안전한 vector 사용
+    std::vector<Stage> StageList; // std 혼자 사용
     int count;
 
 public:

@@ -6,7 +6,7 @@
 class ItemEffectManager
 {
 private:
-    std::vector<std::unique_ptr<ItemEffect>> effects;
+    std::vector<std::unique_ptr<ItemEffect>> effects; //std 혼자 사용
 
 public:
     ItemEffectManager();

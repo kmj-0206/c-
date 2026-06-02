@@ -28,6 +28,7 @@ GameManager::GameManager()
 }
 
 void GameManager::run() {
+	using namespace Console;
     GameState currentState = GameState::TITLE; //처음 state는 title
     bool isRunning = true;
     rankingManager.load(); // 랭킹 정보는 처음에 한 번 로드
@@ -35,7 +36,7 @@ void GameManager::run() {
     while (isRunning) {
         switch (currentState) {
         case GameState::TITLE:
-            Console::drawTitle();
+            drawTitle();
             currentState = GameState::DIFFICULTY_SELECT;
             break;
 
@@ -64,9 +65,9 @@ void GameManager::run() {
             gameOver = false;
             isGameClear = false; // 플래그 초기화
 
-            Console::clear();
-            Console::hideCursor();
-            Console::clearShadowBuffer();
+            clear();
+            hideCursor();
+            clearShadowBuffer();
 
             drawUI();
             redrawScreen();
@@ -84,24 +85,24 @@ void GameManager::run() {
 
             // 게임 오버인지, 클리어인지에 따라 다른 연출
             if (isGameClear) {
-                Console::drawGameClear();
+                drawGameClear();
             }
             else {
-                Console::drawGameOver();
+                drawGameOver();
             }
 
-            std::cout << "\n\n\tPress any key to view rankings...";
+            cout << "\n\n\tPress any key to view rankings...";
             _getch();
             currentState = GameState::RANKING;
             break;
 
         case GameState::RANKING:
-            Console::clear();
-            Console::drawFullRankings(rankingManager.getRank()); // 풀 랭킹창 호출로 변경
+            clear();
+            drawFullRankings(rankingManager.getRank()); // 풀 랭킹창 호출로 변경
 
             // 8위 점수와 겹치지 않도록 Y좌표를 20에서 27로  내림
-            Console::gotoxy(30, 27);
-            std::cout << "[1] Main Menu     [ESC] Exit Game";
+            gotoxy(30, 27);
+            cout << "[1] Main Menu     [ESC] Exit Game";
 
             while (_kbhit()) _getch();
             while (true) {
@@ -122,7 +123,7 @@ void GameManager::run() {
             break;
         }
     }
-    Console::gotoxy(0, 25);
+    gotoxy(0, 25);
 }
 
 void GameManager::handleInput() {

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <conio.h>
+using namespace std;
 void Console::gotoxy(int x, int y)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);

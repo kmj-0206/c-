@@ -14,13 +14,12 @@ int DifficultyManager::select()
     int highlighted = 1;
     bool confirmed = false;
 
-    Console::clear();
-    Console::SetColor(YELLOW);
-    std::cout << "\n\n\n\n";
-    std::cout << "\t\t=================================\n";
-    std::cout << "\t\t        Select Difficulty        \n";
-    std::cout << "\t\t=================================\n\n";
-
+    clear();
+    SetColor(YELLOW);
+    cout << "\n\n\n\n";
+    cout << "\t\t=================================\n";
+    cout << "\t\t        Select Difficulty        \n";
+    cout << "\t\t=================================\n\n";
     int lastHighlighted = -1;
 
     while (!confirmed)
@@ -30,35 +29,35 @@ int DifficultyManager::select()
             gotoxy(0, 8);
 
             if (highlighted == 1) {
-                Console::SetColor(SKY_BLUE);
-                std::cout << "\t\t        ▶  1. Easy (Selected) \n\n";
+                SetColor(SKY_BLUE);
+                cout << "\t\t        ▶  1. Easy (Selected) \n\n";
             }
             else {
-                Console::SetColor(WHITE);
-                std::cout << "\t\t            1. Easy            \n\n";
+                SetColor(WHITE);
+                cout << "\t\t            1. Easy            \n\n";
             }
 
             if (highlighted == 2) {
-                Console::SetColor(SKY_BLUE);
-                std::cout << "\t\t        ▶  2. Normal (Selected) \n\n";
+                SetColor(SKY_BLUE);
+                cout << "\t\t        ▶  2. Normal (Selected) \n\n";
             }
             else {
-                Console::SetColor(WHITE);
-                std::cout << "\t\t            2. Normal          \n\n";
+                SetColor(WHITE);
+                cout << "\t\t            2. Normal          \n\n";
             }
 
             if (highlighted == 3) {
-                Console::SetColor(SKY_BLUE);
-                std::cout << "\t\t        ▶  3. Hard (Selected) \n\n";
+                SetColor(SKY_BLUE);
+                cout << "\t\t        ▶  3. Hard (Selected) \n\n";
             }
             else {
-                Console::SetColor(WHITE);
-                std::cout << "\t\t            3. Hard            \n\n";
+                SetColor(WHITE);
+                cout << "\t\t            3. Hard            \n\n";
             }
 
-            Console::SetColor(GRAY);
+            SetColor(GRAY);
             // [R] 랭킹 보기 UI 추가
-            std::cout << "\n\t    [방향키/숫자] 이동  [엔터] 확정  [R] 랭킹\n";
+            cout << "\n\t    [방향키/숫자] 이동  [엔터] 확정  [R] 랭킹\n";
 
             lastHighlighted = highlighted;
         }
