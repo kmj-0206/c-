@@ -20,6 +20,7 @@ int DifficultyManager::select()
     cout << "\t\t=================================\n";
     cout << "\t\t        Select Difficulty        \n";
     cout << "\t\t=================================\n\n";
+
     int lastHighlighted = -1;
 
     while (!confirmed)
@@ -132,3 +133,4 @@ int DifficultyManager::getCurrentSpeed(int score, StageManager& stages) const
 
     return speed;
 }
+

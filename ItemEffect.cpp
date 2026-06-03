@@ -2,14 +2,14 @@
 
 void ItemEffect::beforeRemoveLines(ClearResult& result, BlockQueue& queue) const
 {
-    // 기본 아이템은 줄 삭제 전 효과가 없다.
+    
     (void)result;
     (void)queue;
 }
 
 int ItemEffect::afterCalculateScore(int score, const ClearResult& result) const
 {
-    // 기본 아이템은 점수를 변경하지 않는다.
+    // 기본 아이템은 점수를 변경 X
     (void)result;
     return score;
 }
@@ -23,8 +23,7 @@ void BombLineEffect::beforeRemoveLines(ClearResult& result, BlockQueue& queue) c
 {
     (void)queue;
 
-    // 현재 삭제 대상 줄을 기준으로 위/아래 줄까지 삭제 대상에 추가한다.
-    // std::set을 사용하므로 같은 줄이 중복 추가되어도 한 번만 저장된다.
+    // 현재 삭제 대상 줄을 기준으로 위/아래 줄까지 삭제 대상에 추가
     std::set<int> expandedRows = result.removedRows;
 
     for (int row : result.removedRows)
@@ -41,7 +40,7 @@ void BombLineEffect::beforeRemoveLines(ClearResult& result, BlockQueue& queue) c
 
 const char* BombLineEffect::name() const
 {
-    return "BombLineEffect";
+    return "A";
 }
 
 bool DoubleScoreEffect::canApply(const ClearResult& result) const
@@ -57,7 +56,7 @@ int DoubleScoreEffect::afterCalculateScore(int score, const ClearResult& result)
 
 const char* DoubleScoreEffect::name() const
 {
-    return "DoubleScoreEffect";
+    return "B";
 }
 
 bool StickBlockSupplyEffect::canApply(const ClearResult& result) const
@@ -73,5 +72,5 @@ void StickBlockSupplyEffect::beforeRemoveLines(ClearResult& result, BlockQueue& 
 
 const char* StickBlockSupplyEffect::name() const
 {
-    return "StickBlockSupplyEffect";
+    return "C";
 }

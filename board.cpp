@@ -40,9 +40,9 @@ void Board::init()
 
 bool Board::isCollision(const BlockState& state, int shape) const
 {
-    for (int y = 0; y < 4; y++)
+    for (int y = 0; y < BLOCK_SIZE; y++)
     {
-        for (int x = 0; x < 4; x++)
+        for (int x = 0; x < BLOCK_SIZE; x++)
         {
             if (TetrisBlock::getBlockData(shape, state.angle, y, x) == 0)
                 continue;
@@ -127,8 +127,8 @@ ClearResult Board::checkClearLines() const
 
     return result;
 }
-
-void Board::removeLines(const std::set<int>& rowsToRemove) // namespace 혼용 방지를 위해 std 냅두기
+// namespace 혼용 방지를 위해 std 냅두기
+void Board::removeLines(const std::set<int>& rowsToRemove)
 {
     if (rowsToRemove.empty())
         return;
@@ -165,7 +165,4 @@ void Board::removeLines(const std::set<int>& rowsToRemove) // namespace 혼용 �
             cells[y][x] = newCells[y][x];
 }
 
-char Board::getCell(int y, int x) const
-{
-    return cells[y][x];
-}
+

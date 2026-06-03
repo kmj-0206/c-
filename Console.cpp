@@ -1,6 +1,7 @@
 ﻿#include "Console.h"
 #include "TetrisBlock.h"
 #include "board.h"
+#include "ItemEffect.h"
 #include <iostream>
 #include <string>
 #include <conio.h>
@@ -35,37 +36,52 @@ void Console::hideCursor()
 }
 
 // mode 0 = 일반 그리기, 1 = 지우기, 2 = 고스트(테두리) 그리기
-void Console::drawBlockShape(int shape, int angle, int startX, int startY, int color, int mode)
+//하나의 온전한 블록을 그림
+void Console::drawBlock(const TetrisBlock& block, int startX, int startY, int mode)
 {
-    if (mode == 0) SetColor(color);
-    else if (mode == 2) SetColor(DARK_GRAY);
+    ItemEffect* effect = nullptr;
+    static BombLineEffect effectA;
+    static DoubleScoreEffect effectB;
+    static StickBlockSupplyEffect effectC;
 
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (TetrisBlock::getBlockData(shape, angle, i, j) == 1) {
+    int curColor = block.getColor();
+    std::string blockMarker = "■";
+
+    if (mode == 1) {
+        curColor = BLACK;
+        blockMarker = "  ";
+    }
+    else if (mode == 2) {
+        curColor = DARK_GRAY;
+        blockMarker = "□";
+    }
+    else {
+        if (block.getItemType() == ItemType::A) { curColor = RED; effect = &effectA; }
+        else if (block.getItemType() == ItemType::B) { curColor = BLUE; effect = &effectB; }
+        else if (block.getItemType() == ItemType::C) { curColor = YELLOW; effect = &effectC; }
+
+        if (effect != nullptr) {
+            blockMarker = std::string(effect->name()) + " ";
+        }
+    }
+
+    SetColor(curColor);
+
+    for (int i = 0; i < BLOCK_SIZE; i++) {
+        for (int j = 0; j < BLOCK_SIZE; j++) {
+            if (TetrisBlock::getBlockData(block.getShape(), block.getAngle(), i, j) == 1) {
                 if (startY + i < 0) continue;
                 gotoxy(startX + j * 2, startY + i);
-
-                if (mode == 1) std::cout << "  ";
-                else if (mode == 2) std::cout << "□";
-                else std::cout << "■";
+                std::cout << blockMarker;
             }
         }
     }
-    if (mode != 1) SetColor(WHITE);
+    SetColor(WHITE);
 }
 
-
-
-void Console::show_block(const TetrisBlock& block)
+void Console::eraseBlock(const TetrisBlock& block)
 {
-    drawBlockShape(block.getShape(), block.getAngle(), block.getX() * 2 + ab_x, block.getY() + ab_y, block.getColor(), 0);
-}
-
-
-void Console::erase_block(const TetrisBlock& block)
-{
-    drawBlockShape(block.getShape(), block.getAngle(), block.getX() * 2 + ab_x, block.getY() + ab_y, BLACK, 1);
+    drawBlock(block, block.getX() * 2 + ab_x, block.getY() + ab_y, 1);
 }
 
 void Console::drawGhostBlock(const TetrisBlock& block, const Board& board)
@@ -76,8 +92,9 @@ void Console::drawGhostBlock(const TetrisBlock& block, const Board& board)
         ghost.commit(next);
         next = ghost.propose(MoveCommand::DOWN);
     }
-    drawBlockShape(ghost.getShape(), ghost.getAngle(), ghost.getX() * 2 + ab_x, ghost.getY() + ab_y, 0, 2);
+    drawBlock(ghost, ghost.getX() * 2 + ab_x, ghost.getY() + ab_y, 2);
 }
+//UI 렌더링 함수들
 void Console::drawTitle()
 {
     clear();
@@ -95,7 +112,7 @@ void Console::drawTitle()
     std::cout << "Press any key to start...  \n";
 
     char miniBoard[12][6] = { 0 };
-    int my = -4, mx = 1, mShape = rand() % 7;
+    int my = -4, mx = 1, mShape = rand() % BLOCK_SHAPE_COUNT;
     ULONGLONG lastUpdate = GetTickCount64();
 
     while (!_kbhit())
@@ -105,8 +122,8 @@ void Console::drawTitle()
         {
             my++;
             bool coll = false;
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < BLOCK_SIZE; i++) {
+                for (int j = 0; j < BLOCK_SIZE; j++) {
                     if (TetrisBlock::getBlockData(mShape, 0, i, j)) {
                         int by = my + i, bx = mx + j;
                         if (by >= 12 || bx < 0 || bx >= 6 || (by >= 0 && miniBoard[by][bx])) coll = true;
@@ -116,8 +133,8 @@ void Console::drawTitle()
 
             if (coll) {
                 my--;
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 4; j++) {
+                for (int i = 0; i < BLOCK_SIZE; i++) {
+                    for (int j = 0; j < BLOCK_SIZE; j++) {
                         if (TetrisBlock::getBlockData(mShape, 0, i, j)) {
                             int by = my + i, bx = mx + j;
                             if (by >= 0 && by < 12 && bx >= 0 && bx < 6) miniBoard[by][bx] = 1;
@@ -144,7 +161,7 @@ void Console::drawTitle()
                         }
                     }
                 }
-                my = -4; mx = rand() % 3; mShape = rand() % 7;
+                my = -4; mx = rand() % 3; mShape = rand() % BLOCK_SHAPE_COUNT;
             }
 
             for (int r = 0; r < 12; r++) {
@@ -152,8 +169,8 @@ void Console::drawTitle()
                 SetColor(WHITE); std::cout << "│";
                 for (int c = 0; c < 6; c++) {
                     bool isCur = false;
-                    for (int i = 0; i < 4; i++) {
-                        for (int j = 0; j < 4; j++) {
+                    for (int i = 0; i < BLOCK_SIZE; i++) {
+                        for (int j = 0; j < BLOCK_SIZE; j++) {
                             if (TetrisBlock::getBlockData(mShape, 0, i, j) && my + i == r && mx + j == c) isCur = true;
                         }
                     }
@@ -168,21 +185,6 @@ void Console::drawTitle()
         Sleep(10);
     }
     _getch();
-}
-
-void Console::drawBoard(const Board& board)
-{
-    for (int y = 0; y < board.getBoardHeight(); y++)
-    {
-        for (int x = 0; x < board.getBoardWidth(); x++)
-        {
-            gotoxy(x * 2 + ab_x, y + ab_y);
-            if (board.getBoardValue(y, x))
-                std::cout << "■";
-            else
-                std::cout << "  ";
-        }
-    }
 }
 
 void Console::drawInfo(int score, int remainingLines, int level, int comboMultiplier, int difficulty)
@@ -216,7 +218,7 @@ void Console::drawNextBlocks(const std::vector<TetrisBlock>& nextBlocks)
     const int baseY = 2;
     SetColor(WHITE);
     gotoxy(baseX, baseY - 1); std::cout << "NEXT 5";
-
+    //이것도 상수화?
     for (int n = 0; n < 5; n++)
     {
         int yOffset = baseY + n * 4;
@@ -238,9 +240,9 @@ void Console::drawNextBlocks(const std::vector<TetrisBlock>& nextBlocks)
         else if (itemVal == 2) SetColor(BLUE);
         else if (itemVal == 3) SetColor(YELLOW);
         else SetColor(block.getColor());
-
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
+        //여거 draw block 되지 않나
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            for (int j = 0; j < BLOCK_SIZE; j++) {
                 if (TetrisBlock::getBlockData(block.getShape(), 0, i, j) == 1) {
                     gotoxy(baseX + j * 2, yOffset + i);
                     if (itemVal == 1) std::cout << "A ";
@@ -311,19 +313,50 @@ void Console::drawGameClear()
     std::cout << "GAME CLEAR!!";
     SetColor(WHITE);
 }
+// ────────────────────────────────────────────────────────
+// 정적/동적 분리 캐시 데이터
+// ────────────────────────────────────────────────────────
+static int cachedBorderColor = Console::WHITE;
+static TetrisBlock lastDrawnBlock;
+static TetrisBlock lastDrawnGhost;
+static bool hasLastDrawn = false;
+void Console::clearDynamicCache() {
+    hasLastDrawn = false;
+}
 
-
-void Console::initRenderBuffer(char buffer[21][14], const Board& board)
-{
-    for (int y = 0; y < 21; y++) { // 20 -> 21로 변경 (바닥 포함)
-        for (int x = 0; x < 14; x++) {
-            buffer[y][x] = board.getBoardValue(y, x);
-        }
+void Console::eraseDynamic() {
+    if (hasLastDrawn) {
+        // 기존에 그려졌던 현재 블록과 고스트 블록의 흔적만 "  "로 지웁니다.
+        eraseBlock(lastDrawnGhost);
+        eraseBlock(lastDrawnBlock);
+        hasLastDrawn = false;
     }
 }
 
-void Console::applyBlocksToBuffer(char buffer[21][14], const Board& board, const TetrisBlock& current)
-{
+void Console::drawStatic(const Board& board, int level) {
+    if (level == 1) cachedBorderColor = YELLOW;
+    else if (level == 2) cachedBorderColor = DARK_YELLOW;
+    else if (level == 3) cachedBorderColor = RED;
+    else if (level >= 4) cachedBorderColor = DARK_RED;
+    else cachedBorderColor = WHITE;
+
+    for (int y = 0; y < BOARD_HEIGHT; y++) {
+        for (int x = 0; x < BOARD_WIDTH; x++) {
+            gotoxy(x * 2 + ab_x, y + ab_y);
+            char cell = board.getBoardValue(y, x);
+
+            if (cell == 1) { SetColor(cachedBorderColor); std::cout << "■"; }
+            else if (cell == 7) { SetColor(GRAY); std::cout << "■"; }
+            else if (cell == 2) { SetColor(RED); std::cout << "A "; }
+            else if (cell == 3) { SetColor(BLUE); std::cout << "B "; }
+            else if (cell == 4) { SetColor(YELLOW); std::cout << "C "; }
+            else { std::cout << "  "; }
+        }
+    }
+    SetColor(WHITE);
+}
+
+void Console::drawDynamic(const Board& board, const TetrisBlock& current) {
     TetrisBlock ghost = current;
     BlockState next = ghost.propose(MoveCommand::DOWN);
     while (!board.isCollision(next, ghost.getShape())) {
@@ -331,139 +364,45 @@ void Console::applyBlocksToBuffer(char buffer[21][14], const Board& board, const
         next = ghost.propose(MoveCommand::DOWN);
     }
 
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (TetrisBlock::getBlockData(ghost.getShape(), ghost.getAngle(), i, j) == 1) {
-                int by = ghost.getY() + i;
-                int bx = ghost.getX() + j;
-                // y의 한계치도 21로 변경
-                if (by >= 0 && by < 21 && bx >= 0 && bx < 14 && buffer[by][bx] == 0) {
-                    buffer[by][bx] = 5;
-                }
-            }
+    //위치가 달라졌을 때만 고스트 블록 지우기
+    if (hasLastDrawn) {
+        if (lastDrawnGhost.getX() != ghost.getX() ||
+            lastDrawnGhost.getY() != ghost.getY() ||
+            lastDrawnGhost.getAngle() != ghost.getAngle() ||
+            lastDrawnGhost.getShape() != ghost.getShape())
+        {
+            eraseBlock(lastDrawnGhost); // 다를 때만 빈칸으로 지움 (깜빡임 원인 제거)
         }
-    }
 
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (TetrisBlock::getBlockData(current.getShape(), current.getAngle(), i, j) == 1) {
-                int by = current.getY() + i;
-                int bx = current.getX() + j;
-                if (by >= 0 && by < 21 && bx >= 0 && bx < 14) {
-                    buffer[by][bx] = 6;
-                }
-            }
-        }
+        // 현재 조종 중인 메인 블록은 위치가 매번 변함
+        eraseBlock(lastDrawnBlock);
     }
+    // 매 틱마다 덮어쓰기
+    drawBlock(ghost, ghost.getX() * 2 + ab_x, ghost.getY() + ab_y, 2);
+    drawBlock(current, current.getX() * 2 + ab_x, current.getY() + ab_y, 0);
+
+    //  상태 저장
+    lastDrawnBlock = current;
+    lastDrawnGhost = ghost;
+    hasLastDrawn = true;
 }
 
-// shadowBuffer를 전역으로 빼서 clear가 가능하게 
-static char shadowBuffer[21][14] = { 0 };
-
-void Console::clearShadowBuffer()
-{
-    for (int y = 0; y < 21; y++) {
-        for (int x = 0; x < 14; x++) {
-            shadowBuffer[y][x] = 0;
-        }
-    }
-}
-
-void Console::renderGameBuffer(const char buffer[21][14], int currentBlockColor)
-{
-    for (int y = 0; y < 21; y++) { // 20 -> 21로 변경
-        for (int x = 0; x < 14; x++) {
-            if (buffer[y][x] != shadowBuffer[y][x]) {
-                gotoxy(x * 2 + ab_x, y + ab_y);
-                switch (buffer[y][x]) {
-                case 0:  std::cout << "  "; break;
-                case 5:  SetColor(DARK_GRAY); std::cout << "□"; break;
-                case 6:  SetColor(currentBlockColor); std::cout << "■"; break;
-                default: SetColor(WHITE); std::cout << "■"; break;
-                }
-                shadowBuffer[y][x] = buffer[y][x];
+void Console::drawFlash(const std::set<int>& rows, const Board& board, bool isFlash) {
+    for (int row : rows) {
+        for (int x = 1; x < BOARD_RIGHT_WALL; x++) {
+            gotoxy(x * 2 + ab_x, row + ab_y);
+            if (isFlash) {
+                SetColor(WHITE);
+                std::cout << "▒";
             }
-        }
-    }
-    SetColor(WHITE);
-}
-
-void Console::drawGameField(const Board& board, const TetrisBlock& current,int level, const std::set<int>& flashRows, bool isFlash)
-{
-    char buffer[21][14] = { 0 };
-
-    // ★ 스테이지(레벨)에 따른 "벽(테두리)" 색상 결정 (흰색 -> 주황색 -> 빨간색 순서)
-    int borderColor = WHITE;
-    if (level == 1) borderColor = YELLOW;             // 2스테이지 (레벨1): 밝은 주황
-    else if (level == 2) borderColor = DARK_YELLOW;   // 3스테이지 (레벨2): 짙은 주황
-    else if (level == 3) borderColor = RED;           // 4스테이지 (레벨3): 빨간색
-    else if (level >= 4) borderColor = DARK_RED;      // 5스테이지 (레벨4): 진한 빨간색
-
-    for (int y = 0; y < board.getBoardHeight(); y++) {
-        for (int x = 0; x < board.getBoardWidth(); x++) {
-            buffer[y][x] = board.getBoardValue(y, x);
-        }
-    }
-
-    if (!isFlash) {
-        TetrisBlock ghost = current;
-        BlockState next = ghost.propose(MoveCommand::DOWN);
-        while (!board.isCollision(next, ghost.getShape())) {
-            ghost.commit(next);
-            next = ghost.propose(MoveCommand::DOWN);
-        }
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                if (TetrisBlock::getBlockData(ghost.getShape(), ghost.getAngle(), i, j) == 1) {
-                    int by = ghost.getY() + i, bx = ghost.getX() + j;
-                    if (by >= 0 && by < 21 && bx >= 0 && bx < 14 && buffer[by][bx] == 0) buffer[by][bx] = 5;
-                }
-            }
-        }
-    }
-
-    int curVal = 10;
-    if (current.getItemType() == ItemType::A) curVal = 12;
-    else if (current.getItemType() == ItemType::B) curVal = 13;
-    else if (current.getItemType() == ItemType::C) curVal = 14;
-
-    if (!isFlash) {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                if (TetrisBlock::getBlockData(current.getShape(), current.getAngle(), i, j) == 1) {
-                    int by = current.getY() + i, bx = current.getX() + j;
-                    if (by >= 0 && by < 21 && bx >= 0 && bx < 14) buffer[by][bx] = curVal;
-                }
-            }
-        }
-    }
-
-    if (isFlash) {
-        for (int row : flashRows) {
-            for (int x = 1; x < 13; x++) {
-                if (buffer[row][x] != 0) buffer[row][x] = 20;
-            }
-        }
-    }
-
-    for (int y = 0; y < 21; y++) {
-        for (int x = 0; x < 14; x++) {
-            if (buffer[y][x] != shadowBuffer[y][x]) {
-                gotoxy(x * 2 + ab_x, y + ab_y);
-
-                switch (buffer[y][x]) {
-                case 0:  std::cout << "  "; break;
-                case 1:  SetColor(borderColor); std::cout << "■"; break; // ★ 레벨별 벽 색상 적용 완료!
-                case 7:  SetColor(GRAY);  std::cout << "■"; break;
-                case 2: case 12: SetColor(RED); std::cout << "A "; break;
-                case 3: case 13: SetColor(BLUE); std::cout << "B "; break;
-                case 4: case 14: SetColor(YELLOW); std::cout << "C "; break;
-                case 5:  SetColor(DARK_GRAY); std::cout << "□"; break;
-                case 10: SetColor(current.getColor()); std::cout << "■"; break;
-                case 20: SetColor(WHITE); std::cout << "▒"; break;
-                default: SetColor(WHITE); std::cout << "■"; break;
-                }
-                shadowBuffer[y][x] = buffer[y][x];
+            else {
+                char cell = board.getBoardValue(row, x);
+                if (cell == 1) { SetColor(cachedBorderColor); std::cout << "■"; }
+                else if (cell == 7) { SetColor(GRAY); std::cout << "■"; }
+                else if (cell == 2) { SetColor(RED); std::cout << "A "; }
+                else if (cell == 3) { SetColor(BLUE); std::cout << "B "; }
+                else if (cell == 4) { SetColor(YELLOW); std::cout << "C "; }
+                else std::cout << "  ";
             }
         }
     }

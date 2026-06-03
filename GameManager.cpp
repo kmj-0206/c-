@@ -28,7 +28,7 @@ GameManager::GameManager()
 }
 
 void GameManager::run() {
-	using namespace Console;
+    using namespace Console;
     GameState currentState = GameState::TITLE; //처음 state는 title
     bool isRunning = true;
     rankingManager.load(); // 랭킹 정보는 처음에 한 번 로드
@@ -55,33 +55,21 @@ void GameManager::run() {
 
         case GameState::IN_GAME:
             // 인게임 진입 시 보드 및 큐 초기화
-            board.init();
-            blockQueue.init(stages, difficultyManager.getLevel());
-            current = blockQueue.pop(stages, difficultyManager.getLevel());
-            controller.setCurrentBlock(current);
-
-            score = 0;
-            lines = 0;
-            gameOver = false;
-            isGameClear = false; // 플래그 초기화
-
-            clear();
-            hideCursor();
-            clearShadowBuffer();
-
-            drawUI();
-            redrawScreen();
-            lastDrop = GetTickCount64();
+            resetGame();
 
             while (!gameOver) {
-                handleInput();
-                updateGame();
-                redrawScreen();
+                // 키 입력이나 타이머에 의한 변화가 발생했을 때만 동적 그리기 호출
+                bool inputRedraw = handleInput();
+                bool timeRedraw = updateGame();
+
+                if (inputRedraw || timeRedraw) {
+                    drawDynamic(board, current);
+                }
                 Sleep(15);
             }
 
             rankingManager.saveScore(score);
-            redrawScreen();
+            drawDynamic(board, current);
 
             // 게임 오버인지, 클리어인지에 따라 다른 연출
             if (isGameClear) {
@@ -91,7 +79,7 @@ void GameManager::run() {
                 drawGameOver();
             }
 
-            cout << "\n\n\tPress any key to view rankings...";
+            std::cout << "\n\n\tPress any key to view rankings...";
             _getch();
             currentState = GameState::RANKING;
             break;
@@ -125,33 +113,59 @@ void GameManager::run() {
     }
     gotoxy(0, 25);
 }
+//run함수만 호출하긴 하는데, 그냥, 나중에 수정하기 좋으라고 이렇게 함
+void GameManager::resetGame()
+{
+    board.init();
+    blockQueue.init(stages, difficultyManager.getLevel());
+    current = blockQueue.pop(stages, difficultyManager.getLevel());
+    controller.setCurrentBlock(current);
 
-void GameManager::handleInput() {
-    if (_kbhit()) {
-        int key = _getch();
+    score = 0;
+    lines = 0;
+    gameOver = false;
+    isGameClear = false;
 
-        if (key == 27) {
-            gameOver = true;
-            return;
-        }
+    Console::clear();
+    Console::hideCursor();
+    Console::clearDynamicCache(); // 이전 판의 추적 데이터 초기화
 
-        if (key == 224) {
-            key = _getch();
-            switch (key) {
-            case 75: controller.move(MoveCommand::LEFT);   break;
-            case 77: controller.move(MoveCommand::RIGHT);  break;
-            case 80: controller.move(MoveCommand::DOWN);   break;
-            case 72: controller.move(MoveCommand::ROTATE); break;
-            }
-        }
-        else if (key == ' ') {
-            controller.dropFull();
-            lastDrop = 0;
-        }
-    }
+    drawUI();
+    // 시작 시 보드, 벽 색상 초기화를 위해 정적 대상을 1회 출력
+    Console::drawStatic(board, difficultyManager.getLevel());
+    Console::drawDynamic(board, current);
+    lastDrop = GetTickCount64();
 }
 
-void GameManager::updateGame() {
+bool GameManager::handleInput() {
+    if (!_kbhit()) return false;
+
+    int key = _getch();
+
+    if (key == 27) {
+        gameOver = true;
+        return false;
+    }
+
+    if (key == 224) {
+        key = _getch();
+        switch (key) {
+            // controller.move가 성공적으로 이동했을 때만 true를 반환하여 렌더링을 유도
+        case 75: return controller.move(MoveCommand::LEFT);
+        case 77: return controller.move(MoveCommand::RIGHT);
+        case 80: return controller.move(MoveCommand::DOWN);
+        case 72: return controller.move(MoveCommand::ROTATE);
+        }
+    }
+    else if (key == ' ') {
+        controller.dropFull();
+        lastDrop = 0; // 즉시 바닥에 고정되도록 타이머 리셋
+        return true;  // 스페이스바를 누르면 무조건 화면 갱신 필요
+    }
+    return false;
+}
+//game logic update
+bool GameManager::updateGame() {
     ULONGLONG now = GetTickCount64();
     int speed = difficultyManager.getCurrentSpeed(score, stages);
 
@@ -161,18 +175,23 @@ void GameManager::updateGame() {
         if (!moved) {
             fixCurrentBlock(now);
 
-            // 블록을 합치는 과정에서 클리어나 오버 판정이 나면 다음 블록을 생성하지 않음
             if (!gameOver) {
                 spawnNextBlock();
                 drawUI();
             }
         }
         lastDrop = now;
+        return true; // 하강이나 블록 스폰으로 인해 화면 변화 발생
     }
+    return false;
 }
 
 void GameManager::fixCurrentBlock(ULONGLONG now)
 {
+    // 보드와 겹치기 '직전'에 화면에 남아있는 동적 객체를 강제로 싹 지웁니다.
+    Console::eraseDynamic();
+    Console::clearDynamicCache(); // 다음 프레임부터 새로 추적 시작
+
     if (gameRule.isGameOverOnMerge(current)) {
         gameOver = true;
         return;
@@ -180,11 +199,14 @@ void GameManager::fixCurrentBlock(ULONGLONG now)
     board.merge(current);
 
     ClearResult clearResult = board.checkClearLines();
+    itemEffectManager.applyBeforeRemoveLines(clearResult, blockQueue);
 
-    // 2. 라인 클리어 애니메이션 처리
     if (!clearResult.removedRows.empty()) {
+        // 이펙트 발동 전 합쳐진 보드의 데이터를 1회 갱신
+        Console::drawStatic(board, difficultyManager.getLevel());
+
         for (int i = 0; i < 4; i++) {
-            Console::drawGameField(board, current, difficultyManager.getLevel(), clearResult.removedRows, i % 2 == 0);
+            Console::drawFlash(clearResult.removedRows, board, i % 2 == 0);
             Sleep(80);
         }
         board.removeLines(clearResult.removedRows);
@@ -197,20 +219,23 @@ void GameManager::fixCurrentBlock(ULONGLONG now)
         gained *= combo;
         gained = itemEffectManager.applyAfterCalculateScore(gained, clearResult);
 
-        score += gained;
+        score += gained * difficultyManager.getDifficulty();
         lines += clearResult.fullLines;
-
-        itemEffectManager.applyBeforeRemoveLines(clearResult, blockQueue);
 
         if (difficultyManager.updateLevel(score, lines, stages)) {
             gameOver = true;
             isGameClear = true;
         }
     }
+
+    // 병합/삭제 후 보드 데이터가 고정되었으므로 정적 레이어 최종 반영
+    Console::drawStatic(board, difficultyManager.getLevel());
 }
 
 void GameManager::spawnNextBlock()
 {
+    Console::clearDynamicCache();
+
     current = blockQueue.pop(stages, difficultyManager.getLevel());
     controller.setCurrentBlock(current);
 
@@ -220,13 +245,6 @@ void GameManager::spawnNextBlock()
     }
 }
 
-void GameManager::redrawScreen()
-{
-    using namespace Console;
-    
-    
-    drawGameField(board, current, difficultyManager.getLevel());
-}
 
 void GameManager::drawUI()
 {

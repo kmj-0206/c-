@@ -41,15 +41,22 @@ private:
     BlockControl controller;
     ULONGLONG lastDrop;
 
-    void resetGame(); //미사용 함수
-    void handleInput();
-    void updateGame();
+    // 게임 데이터 초기화 및 게임 시작 준비
+    void resetGame();
+    // 사용자 키보드 입력 처리
+    bool handleInput();
+    // 타이머 틱에 따른 게임 논리 갱신
+    bool updateGame();
+    // 바닥에 닿은 블록 병합 및 라인 정리 실행
     void fixCurrentBlock(ULONGLONG now);
-    void processLineClear(ClearResult& clearResult); // 미사용 함수
+    // 큐에서 다음 블록 꺼내고 스폰 오버 검사
     void spawnNextBlock();
-    void redrawScreen();
+   
+    // 게임 UI(정보, 넥스트, 랭킹) 화면 출력
     void drawUI();
 public:
+    // 게임 매니저 싱글톤 인스턴스 반환
     static GameManager& getInstance();
+    // 게임 전체 메인 구동 루프
     void run();
 };

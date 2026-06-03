@@ -7,10 +7,11 @@ private:
     int multiplier;        // 현재 콤보 배수
 
 public:
+    // 기본 생성자
     ComboManager();
 
-    // clearedLines > 0이면 콤보 증가.
-    // clearedLines == 0인 블록 고정이 3번 연속 발생하면 콤보 초기화.
+    // 라인 클리어 결과를 반영하여 콤보 갱신
     int updateByClear(int clearedLines);
+    // 현재 콤보 배수 반환
     int getMultiplier() const;
 };

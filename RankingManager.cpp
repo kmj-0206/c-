@@ -2,6 +2,7 @@
 #include <fstream>
 #include <algorithm>
 #include <functional>
+
 using namespace std;
 RankingManager::RankingManager(const char* fileName)
     : fileName(fileName)
@@ -38,7 +39,7 @@ void RankingManager::saveScore(int score)
 
     allScores.push_back(score);
 
-    ofstream fout(fileName, ios::trunc);
+    ofstream fout(fileName, std::ios::trunc);
     for (int s : allScores)
     {
         fout << s << '\n';

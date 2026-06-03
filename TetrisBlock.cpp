@@ -1,7 +1,7 @@
 #include "TetrisBlock.h"
 #include <cstdlib>
-
-const unsigned short TetrisBlock::block[7][4] = {
+// 상수 BLOCK_SHAPE_COUNT 적용
+const unsigned short TetrisBlock::block[BLOCK_SHAPE_COUNT][BLOCK_ANGLE_COUNT] = {
     {0x0F00, 0x2222, 0x0F00, 0x4444}, // I 블록
     {0x8E00, 0x6440, 0x0E20, 0x44C0}, // J 블록
     {0x2E00, 0x4460, 0x0E80, 0xC440}, // L 블록
@@ -10,15 +10,15 @@ const unsigned short TetrisBlock::block[7][4] = {
     {0x4E00, 0x4640, 0x0E40, 0x4C40}, // T 블록
     {0xC600, 0x2640, 0xC600, 0x2640}  // Z 블록
 };
+
 int TetrisBlock::selectRandomShape(int stickRate)
 {
-    // stickRate 확률로 I 블록을 더 자주 생성한다.
-    // 난이도/스테이지에 따라 stickRate가 달라지므로 기존 기능을 그대로 유지한다.
     int randomValue = rand() % 100;
     if (randomValue < stickRate)
         return 0;
 
-    return (rand() % 6) + 1;
+    // 상수 BLOCK_SHAPE_COUNT 활용하여 1 ~ (BLOCK_SHAPE_COUNT - 1) 범위 반환
+    return (rand() % (BLOCK_SHAPE_COUNT - 1)) + 1;
 }
 
 ItemType TetrisBlock::selectRandomItemType()
