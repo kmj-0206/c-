@@ -217,42 +217,23 @@ void Console::drawNextBlocks(const std::vector<TetrisBlock>& nextBlocks)
     const int baseX = 62;
     const int baseY = 2;
     SetColor(WHITE);
-    gotoxy(baseX, baseY - 1); std::cout << "NEXT 5";
-    //이것도 상수화?
-    for (int n = 0; n < 5; n++)
+    gotoxy(baseX, baseY - 1);
+    std::cout << "NEXT " << BlockQueue::getPreviewCnt();
+
+    for (int n = 0; n < BlockQueue::getPreviewCnt(); n++)
     {
-        int yOffset = baseY + n * 4;
-        for (int r = 0; r < 4; r++) {
+        int yOffset = baseY + n * BLOCK_SIZE;
+
+        // 이전 잔상을 지우기 위한 공백 덮어쓰기
+        for (int r = 0; r < BLOCK_SIZE; r++) {
             gotoxy(baseX, yOffset + r);
             std::cout << "        ";
         }
 
         if (n >= static_cast<int>(nextBlocks.size())) continue;
-        const TetrisBlock& block = nextBlocks[n];
 
-        // 1. NEXT 블록에도 아이템 알파벳 표시
-        int itemVal = 0;
-        if (block.getItemType() == ItemType::A) itemVal = 1;
-        else if (block.getItemType() == ItemType::B) itemVal = 2;
-        else if (block.getItemType() == ItemType::C) itemVal = 3;
-
-        if (itemVal == 1) SetColor(RED);
-        else if (itemVal == 2) SetColor(BLUE);
-        else if (itemVal == 3) SetColor(YELLOW);
-        else SetColor(block.getColor());
-        //여거 draw block 되지 않나
-        for (int i = 0; i < BLOCK_SIZE; i++) {
-            for (int j = 0; j < BLOCK_SIZE; j++) {
-                if (TetrisBlock::getBlockData(block.getShape(), 0, i, j) == 1) {
-                    gotoxy(baseX + j * 2, yOffset + i);
-                    if (itemVal == 1) std::cout << "A ";
-                    else if (itemVal == 2) std::cout << "B ";
-                    else if (itemVal == 3) std::cout << "C ";
-                    else std::cout << "■";
-                }
-            }
-        }
-        SetColor(WHITE);
+        // 길었던 아이템 색상 판별 및 2중 for문 렌더링 로직을 마스터 함수 단 1줄로 대체
+        drawBlock(nextBlocks[n], baseX, yOffset);
     }
 }
 void Console::drawSideRankings(const std::vector<int>& ranks)

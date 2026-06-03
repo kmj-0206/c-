@@ -33,4 +33,5 @@ public:
 
     // 프리뷰 블록 목록 반환
     const std::vector<TetrisBlock>& preview() const;
+    static int getPreviewCnt() { return PREVIEW_COUNT; }
 };
