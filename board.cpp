@@ -79,9 +79,9 @@ void Board::merge(const TetrisBlock& block)
     if (block.isItemBlock())
         cellValue = static_cast<char>(block.getItemType());
 
-    for (int y = 0; y < 4; y++)
+    for (int y = 0; y < BLOCK_SIZE; y++)
     {
-        for (int x = 0; x < 4; x++)
+        for (int x = 0; x < BLOCK_SIZE; x++)
         {
             if (TetrisBlock::getBlockData(shape, angle, y, x) == 0)
                 continue;
