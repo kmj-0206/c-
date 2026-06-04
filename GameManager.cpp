@@ -90,7 +90,7 @@ void GameManager::run() {
 
             // 8위 점수와 겹치지 않도록 Y좌표를 20에서 27로  내림
             gotoxy(30, 27);
-            cout << "[1] Main Menu     [ESC] Exit Game";
+            std::cout << "[1] Main Menu     [ESC] Exit Game";
 
             while (_kbhit()) _getch();
             while (true) {
@@ -116,6 +116,7 @@ void GameManager::run() {
 //run함수만 호출하긴 하는데, 그냥, 나중에 수정하기 좋으라고 이렇게 함
 void GameManager::resetGame()
 {
+	using namespace Console;
     board.init();
     blockQueue.init(stages, difficultyManager.getLevel());
     current = blockQueue.pop(stages, difficultyManager.getLevel());
@@ -126,14 +127,14 @@ void GameManager::resetGame()
     gameOver = false;
     isGameClear = false;
 
-    Console::clear();
-    Console::hideCursor();
-    Console::clearDynamicCache(); // 이전 판의 추적 데이터 초기화
+    clear();
+    hideCursor();
+    clearDynamicCache(); // 이전 판의 추적 데이터 초기화
 
     drawUI();
     // 시작 시 보드, 벽 색상 초기화를 위해 정적 대상을 1회 출력
-    Console::drawStatic(board, difficultyManager.getLevel());
-    Console::drawDynamic(board, current);
+    drawStatic(board, difficultyManager.getLevel());
+    drawDynamic(board, current);
     lastDrop = GetTickCount64();
 }
 
@@ -188,9 +189,10 @@ bool GameManager::updateGame() {
 
 void GameManager::fixCurrentBlock(ULONGLONG now)
 {
+	using namespace Console;
     // 보드와 겹치기 '직전'에 화면에 남아있는 동적 객체를 강제로 싹 지웁니다.
-    Console::eraseDynamic();
-    Console::clearDynamicCache(); // 다음 프레임부터 새로 추적 시작
+    eraseDynamic();
+    clearDynamicCache(); // 다음 프레임부터 새로 추적 시작
 
     if (gameRule.isGameOverOnMerge(current)) {
         gameOver = true;
@@ -203,10 +205,10 @@ void GameManager::fixCurrentBlock(ULONGLONG now)
 
     if (!clearResult.removedRows.empty()) {
         // 이펙트 발동 전 합쳐진 보드의 데이터를 1회 갱신
-        Console::drawStatic(board, difficultyManager.getLevel());
+        drawStatic(board, difficultyManager.getLevel());
 
         for (int i = 0; i < 4; i++) {
-            Console::drawFlash(clearResult.removedRows, board, i % 2 == 0);
+            drawFlash(clearResult.removedRows, board, i % 2 == 0);
             Sleep(80);
         }
         board.removeLines(clearResult.removedRows);
@@ -229,7 +231,7 @@ void GameManager::fixCurrentBlock(ULONGLONG now)
     }
 
     // 병합/삭제 후 보드 데이터가 고정되었으므로 정적 레이어 최종 반영
-    Console::drawStatic(board, difficultyManager.getLevel());
+    drawStatic(board, difficultyManager.getLevel());
 }
 
 void GameManager::spawnNextBlock()

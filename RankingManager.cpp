@@ -39,7 +39,7 @@ void RankingManager::saveScore(int score)
 
     allScores.push_back(score);
 
-    ofstream fout(fileName, std::ios::trunc);
+    ofstream fout(fileName, ios::trunc);
     for (int s : allScores)
     {
         fout << s << '\n';

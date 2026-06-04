@@ -45,7 +45,7 @@ void Console::drawBlock(const TetrisBlock& block, int startX, int startY, int mo
     static StickBlockSupplyEffect effectC;
 
     int curColor = block.getColor();
-    std::string blockMarker = "■";
+    string blockMarker = "■";
 
     if (mode == 1) {
         curColor = BLACK;
@@ -61,7 +61,7 @@ void Console::drawBlock(const TetrisBlock& block, int startX, int startY, int mo
         else if (block.getItemType() == ItemType::C) { curColor = YELLOW; effect = &effectC; }
 
         if (effect != nullptr) {
-            blockMarker = std::string(effect->name()) + " ";
+            blockMarker = string(effect->name()) + " ";
         }
     }
 
@@ -72,7 +72,7 @@ void Console::drawBlock(const TetrisBlock& block, int startX, int startY, int mo
             if (TetrisBlock::getBlockData(block.getShape(), block.getAngle(), i, j) == 1) {
                 if (startY + i < 0) continue;
                 gotoxy(startX + j * 2, startY + i);
-                std::cout << blockMarker;
+                cout << blockMarker;
             }
         }
     }
@@ -101,15 +101,15 @@ void Console::drawTitle()
     hideCursor();
 
     SetColor(SKY_BLUE);
-    std::cout << "\n\n\n\n";
-    std::cout << "\t\t  TTTTT EEEEE TTTTT RRRR  IIIII SSSSS\n";
-    std::cout << "\t\t    T   E       T   R   R   I   S    \n";
-    std::cout << "\t\t    T   EEE     T   RRRR    I   SSSSS\n";
-    std::cout << "\t\t    T   E       T   R R     I       S\n";
-    std::cout << "\t\t    T   EEEEE   T   R  RR IIIII SSSSS\n\n\n";
+    cout << "\n\n\n\n";
+    cout << "\t\t  TTTTT EEEEE TTTTT RRRR  IIIII SSSSS\n";
+    cout << "\t\t    T   E       T   R   R   I   S    \n";
+    cout << "\t\t    T   EEE     T   RRRR    I   SSSSS\n";
+    cout << "\t\t    T   E       T   R R     I       S\n";
+    cout << "\t\t    T   EEEEE   T   R  RR IIIII SSSSS\n\n\n";
     SetColor(WHITE);
     gotoxy(24, 12);
-    std::cout << "Press any key to start...  \n";
+    cout << "Press any key to start...  \n";
 
     char miniBoard[12][6] = { 0 };
     int my = -4, mx = 1, mShape = rand() % BLOCK_SHAPE_COUNT;
@@ -166,7 +166,7 @@ void Console::drawTitle()
 
             for (int r = 0; r < 12; r++) {
                 gotoxy(30, 14 + r);
-                SetColor(WHITE); std::cout << "│";
+                SetColor(WHITE); cout << "│";
                 for (int c = 0; c < 6; c++) {
                     bool isCur = false;
                     for (int i = 0; i < BLOCK_SIZE; i++) {
@@ -174,12 +174,12 @@ void Console::drawTitle()
                             if (TetrisBlock::getBlockData(mShape, 0, i, j) && my + i == r && mx + j == c) isCur = true;
                         }
                     }
-                    if (miniBoard[r][c] || isCur) { SetColor(GRAY); std::cout << "■"; }
-                    else std::cout << "  ";
+                    if (miniBoard[r][c] || isCur) { SetColor(GRAY); cout << "■"; }
+                    else cout << "  ";
                 }
-                SetColor(WHITE); std::cout << "│";
+                SetColor(WHITE); cout << "│";
             }
-            gotoxy(30, 14 + 12); std::cout << "└────────────┘";
+            gotoxy(30, 14 + 12); cout << "└────────────┘";
             lastUpdate = now;
         }
         Sleep(10);
@@ -190,35 +190,35 @@ void Console::drawTitle()
 void Console::drawInfo(int score, int remainingLines, int level, int comboMultiplier, int difficulty)
 {   
     SetColor(WHITE);
-    gotoxy(40, 3); std::cout << "Score : " << score << "      ";
-    gotoxy(40, 5); std::cout << "Lines Left: " << remainingLines << "      ";
-    gotoxy(40, 7); std::cout << "Level : " << level + 1 << "      ";
+    gotoxy(40, 3); cout << "Score : " << score << "      ";
+    gotoxy(40, 5); cout << "Lines Left: " << remainingLines << "      ";
+    gotoxy(40, 7); cout << "Level : " << level + 1 << "      ";
 
     // 콤보 숫자만 눈에 띄게 빨간색으로 강조
     gotoxy(40, 9);
-    std::cout << "Combo : ";
+    cout << "Combo : ";
     if (comboMultiplier == 1) SetColor(WHITE);
     else SetColor(RED);
-    std::cout << "x" << comboMultiplier << "      ";
+    cout << "x" << comboMultiplier << "      ";
 
     SetColor(WHITE);
-    gotoxy(40, 11); std::cout << "Difficulty : " << difficulty << "      ";
+    gotoxy(40, 11); cout << "Difficulty : " << difficulty << "      ";
 
     // 아이템 정보 UI
-    gotoxy(40, 14); SetColor(SKY_BLUE); std::cout << "[ Item Info ]";
-    gotoxy(40, 15); SetColor(RED); std::cout << "A"; SetColor(WHITE); std::cout << " : Boom!!";
-    gotoxy(40, 16); SetColor(BLUE); std::cout << "B"; SetColor(WHITE); std::cout << " : Double score";
-    gotoxy(40, 17); SetColor(YELLOW); std::cout << "C"; SetColor(WHITE); std::cout << " : 5 sticks";
+    gotoxy(40, 14); SetColor(SKY_BLUE); cout << "[ Item Info ]";
+    gotoxy(40, 15); SetColor(RED); cout << "A"; SetColor(WHITE); cout << " : Boom!!";
+    gotoxy(40, 16); SetColor(BLUE); cout << "B"; SetColor(WHITE); cout << " : Double score";
+    gotoxy(40, 17); SetColor(YELLOW); cout << "C"; SetColor(WHITE); cout << " : 5 sticks";
     SetColor(WHITE);
 }
 
-void Console::drawNextBlocks(const std::vector<TetrisBlock>& nextBlocks)
+void Console::drawNextBlocks(const vector<TetrisBlock>& nextBlocks)
 {
     const int baseX = 62;
     const int baseY = 2;
     SetColor(WHITE);
     gotoxy(baseX, baseY - 1);
-    std::cout << "NEXT " << BlockQueue::getPreviewCnt();
+    cout << "NEXT " << BlockQueue::getPreviewCnt();
 
     for (int n = 0; n < BlockQueue::getPreviewCnt(); n++)
     {
@@ -227,7 +227,7 @@ void Console::drawNextBlocks(const std::vector<TetrisBlock>& nextBlocks)
         // 이전 잔상을 지우기 위한 공백 덮어쓰기
         for (int r = 0; r < BLOCK_SIZE; r++) {
             gotoxy(baseX, yOffset + r);
-            std::cout << "        ";
+            cout << "        ";
         }
 
         if (n >= static_cast<int>(nextBlocks.size())) continue;
@@ -236,30 +236,30 @@ void Console::drawNextBlocks(const std::vector<TetrisBlock>& nextBlocks)
         drawBlock(nextBlocks[n], baseX, yOffset);
     }
 }
-void Console::drawSideRankings(const std::vector<int>& ranks)
+void Console::drawSideRankings(const vector<int>& ranks)
 {
     const int x = 40;
     const int y = 20;
     SetColor(WHITE);
-    gotoxy(x, y); std::cout << "RANK TOP 3";
+    gotoxy(x, y); cout << "RANK TOP 3";
     for (int i = 0; i < 3; i++)
     {
         gotoxy(x, y + 2 + i);
         if (i < static_cast<int>(ranks.size()))
-            std::cout << i + 1 << ". " << ranks[i] << "        ";
+            cout << i + 1 << ". " << ranks[i] << "        ";
         else
-            std::cout << i + 1 << ". -        ";
+            cout << i + 1 << ". -        ";
     }
 }
 // 화려한 전체 랭킹 화면 UI 추가
-void Console::drawFullRankings(const std::vector<int>& ranks)
+void Console::drawFullRankings(const vector<int>& ranks)
 {
     clear();
     SetColor(SKY_BLUE);
 
     // 제목 위치를 위로 올립니다 (\n 텍스트 대신 gotoxy 사용)
     gotoxy(28, 2);
-    std::cout << "========== R A N K I N G S ==========";
+    cout << "========== R A N K I N G S ==========";
 
     for (int i = 0; i < 10; i++) {
         if (i == 0) SetColor(YELLOW);         // 1위 금색
@@ -271,12 +271,12 @@ void Console::drawFullRankings(const std::vector<int>& ranks)
         gotoxy(32, 5 + i * 2);
 
         // 1~9위와 10위의 글자 길이 차이를 맞춰 정렬합니다
-        std::string rankSpacing = (i < 9) ? "  " : " ";
+        string rankSpacing = (i < 9) ? "  " : " ";
 
         if (i < static_cast<int>(ranks.size()))
-            std::cout << "Rank" << rankSpacing << i + 1 << "\t\t" << ranks[i] << " Pts";
+            cout << "Rank" << rankSpacing << i + 1 << "\t\t" << ranks[i] << " Pts";
         else
-            std::cout << "Rank" << rankSpacing << i + 1 << "\t\t- Pts";
+            cout << "Rank" << rankSpacing << i + 1 << "\t\t- Pts";
     }
     SetColor(WHITE);
 }
@@ -284,14 +284,14 @@ void Console::drawGameOver()
 {
     gotoxy(20, 10);
     SetColor(RED);
-    std::cout << "GAME OVER";
+    cout << "GAME OVER";
     SetColor(WHITE);
 }
 void Console::drawGameClear()
 {
     gotoxy(40, 20);
     SetColor(SKY_BLUE);
-    std::cout << "GAME CLEAR!!";
+    cout << "GAME CLEAR!!";
     SetColor(WHITE);
 }
 // ────────────────────────────────────────────────────────
@@ -326,12 +326,12 @@ void Console::drawStatic(const Board& board, int level) {
             gotoxy(x * 2 + ab_x, y + ab_y);
             char cell = board.getBoardValue(y, x);
 
-            if (cell == 1) { SetColor(cachedBorderColor); std::cout << "■"; }
-            else if (cell == 7) { SetColor(GRAY); std::cout << "■"; }
-            else if (cell == 2) { SetColor(RED); std::cout << "A "; }
-            else if (cell == 3) { SetColor(BLUE); std::cout << "B "; }
-            else if (cell == 4) { SetColor(YELLOW); std::cout << "C "; }
-            else { std::cout << "  "; }
+            if (cell == 1) { SetColor(cachedBorderColor); cout << "■"; }
+            else if (cell == 7) { SetColor(GRAY); cout << "■"; }
+            else if (cell == 2) { SetColor(RED); cout << "A "; }
+            else if (cell == 3) { SetColor(BLUE); cout << "B "; }
+            else if (cell == 4) { SetColor(YELLOW); cout << "C "; }
+            else { cout << "  "; }
         }
     }
     SetColor(WHITE);
@@ -368,22 +368,22 @@ void Console::drawDynamic(const Board& board, const TetrisBlock& current) {
     hasLastDrawn = true;
 }
 
-void Console::drawFlash(const std::set<int>& rows, const Board& board, bool isFlash) {
+void Console::drawFlash(const set<int>& rows, const Board& board, bool isFlash) {
     for (int row : rows) {
         for (int x = 1; x < BOARD_RIGHT_WALL; x++) {
             gotoxy(x * 2 + ab_x, row + ab_y);
             if (isFlash) {
                 SetColor(WHITE);
-                std::cout << "▒";
+                cout << "▒";
             }
             else {
                 char cell = board.getBoardValue(row, x);
-                if (cell == 1) { SetColor(cachedBorderColor); std::cout << "■"; }
-                else if (cell == 7) { SetColor(GRAY); std::cout << "■"; }
-                else if (cell == 2) { SetColor(RED); std::cout << "A "; }
-                else if (cell == 3) { SetColor(BLUE); std::cout << "B "; }
-                else if (cell == 4) { SetColor(YELLOW); std::cout << "C "; }
-                else std::cout << "  ";
+                if (cell == 1) { SetColor(cachedBorderColor); cout << "■"; }
+                else if (cell == 7) { SetColor(GRAY); cout << "■"; }
+                else if (cell == 2) { SetColor(RED); cout << "A "; }
+                else if (cell == 3) { SetColor(BLUE); cout << "B "; }
+                else if (cell == 4) { SetColor(YELLOW); cout << "C "; }
+                else cout << "  ";
             }
         }
     }

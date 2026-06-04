@@ -1,12 +1,13 @@
 #include "ItemEffectManager.h"
+using namespace std;
 
 ItemEffectManager::ItemEffectManager()
 {
     // 새 아이템을 추가할 때는 여기에서 효과 객체만 하나 추가하면 된다.
     // GameManager나 Board의 if문을 늘릴 필요가 없다.
-    effects.push_back(std::make_unique<BombLineEffect>());
-    effects.push_back(std::make_unique<DoubleScoreEffect>());
-    effects.push_back(std::make_unique<StickBlockSupplyEffect>());
+    effects.push_back(make_unique<BombLineEffect>());
+    effects.push_back(make_unique<DoubleScoreEffect>());
+    effects.push_back(make_unique<StickBlockSupplyEffect>());
 }
 
 void ItemEffectManager::applyBeforeRemoveLines(ClearResult& result, BlockQueue& queue) const
